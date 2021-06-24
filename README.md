@@ -41,10 +41,14 @@ Off is used to turn off the machine.
             "milk": 200,
             "coffee": 100,
         }
+        def clear(n):
+            time.sleep(n)
+            system('cls')
+            #sytem('clear') for linux system 
 
-        def sufficient(ingredients):
+        def sufficient(resources,ingredients):
             for item in resources:
-                if ingredients[item]>resources[item]:
+                if resources[item]<ingredients[item]:
                     print(f"Sorry {item} is insufficient!!!")
                     return False
             return True
@@ -74,10 +78,18 @@ Off is used to turn off the machine.
                 global resources
                 resources[item]-=cofee[item]
             print(f"Here is Your {choice}")
-
+        select=True
         state = True
         while state:
-            choice = input("What would you like to have: (espresso, cappuccino, latte):").lower()
+            while select:
+                choice = input("What would you like to have: (espresso, cappuccino, latte):").lower()
+                list=["espresso","cappuccino","latte","report","off"]
+                if choice not in list:
+                    print("Invalid choice!!!") 
+                    clear(2)
+                else:
+                    select = False
+
             if choice =='off':
                 state = False
             elif choice =='report':
@@ -88,16 +100,23 @@ Off is used to turn off the machine.
                 back = input("Enter to go back:")
             else:
                 drink = MENU[choice]
-                if sufficient(drink['ingredients']):
+                if sufficient(resources,drink['ingredients']):
                     print(f"Cost: {drink['cost']}")
-                payment =calculate()
+                    payment =calculate()
 
-                if transaction(payment,drink["cost"]):
-                    make(drink["ingredients"],choice)
-            time.sleep(3)
-            system('cls')
-            
-            
-            
+                    if transaction(payment,drink["cost"]):
+                        make(drink["ingredients"],choice)
+                        choice=""             
+                        clear(3)
 
-
+            for item in resources:
+                if resources[item]==0:
+                    print("Machine out of Order!!!")
+                    clear(20)
+                    choice='off'
+                    state=False
+                else:
+                    choice=""
+            select= True 
+            clear(0)
+   
